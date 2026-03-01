@@ -46,9 +46,6 @@ app.use('/api/scans', scanRoutes);
 app.use('/api/vulnerabilities', vulnRoutes);
 app.use('/api/groups', groupRoutes);
 
-// ========== ANALYTICS API ==========
-const analyticsRoutes = require('./routes/analytics');
-app.use('/api/analytics', analyticsRoutes);
 
 // ========== SOCKET.IO AUTH + LIVE SCAN ==========
 io.use((socket, next) => {
@@ -284,6 +281,6 @@ server.listen(PORT, () => {
     console.log(`🔌 WebSocket: ws://localhost:${PORT} (live scan)`);
     console.log(`🔐 Auth API:  POST http://localhost:${PORT}/api/auth/signup`);
     console.log(`🔐 Auth API:  POST http://localhost:${PORT}/api/auth/login`);
-    console.log(`📊 Analytics: GET  http://localhost:${PORT}/api/analytics`);
+
     console.log(`❤️  Health:    GET  http://localhost:${PORT}/api/health\n`);
 });

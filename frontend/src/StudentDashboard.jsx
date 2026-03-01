@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import API_BASE from './api';
 import { io } from 'socket.io-client';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 const StudentDashboard = () => {
   const { user, token, logout } = useAuth();
@@ -189,15 +188,6 @@ const StudentDashboard = () => {
     }
   };
 
-  // Scan type chart data
-  const scanTypeData = scanHistory.reduce((acc, scan) => {
-    const type = scan.scanType || 'quick';
-    const existing = acc.find(a => a.type === type);
-    if (existing) existing.count++;
-    else acc.push({ type, count: 1 });
-    return acc;
-  }, []);
-  const chartColors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6'];
 
   return (
     <div className="min-h-screen bg-[#020617] text-slate-200 flex font-sans">
@@ -412,28 +402,6 @@ const StudentDashboard = () => {
               </div>
             )}
 
-            {/* Mini Scan Type Chart */}
-            {scanTypeData.length > 0 && (
-              <div className="bg-slate-900/40 border border-slate-800 p-6 rounded-[2.5rem] backdrop-blur-md">
-                <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                  <BarChart3 size={18} className="text-purple-400" /> My Scans by Type
-                </h3>
-                <ResponsiveContainer width="100%" height={160}>
-                  <BarChart data={scanTypeData}>
-                    <XAxis dataKey="type" tick={{ fill: '#64748b', fontSize: 11 }} axisLine={false} tickLine={false} />
-                    <YAxis tick={{ fill: '#64748b', fontSize: 11 }} axisLine={false} tickLine={false} allowDecimals={false} />
-                    <Tooltip
-                      contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '12px', color: '#fff' }}
-                    />
-                    <Bar dataKey="count" radius={[6, 6, 0, 0]}>
-                      {scanTypeData.map((_, idx) => (
-                        <Cell key={idx} fill={chartColors[idx % chartColors.length]} />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            )}
           </div>
 
         </div>
