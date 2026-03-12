@@ -1,4 +1,5 @@
-// In dev mode, Vite proxy handles /api requests (see vite.config.js)
-// In production, set VITE_API_URL to the backend URL
-const API_BASE = import.meta.env.VITE_API_URL || '';
+// If VITE_API_URL is intentionally set to something else, use it.
+// Default to dynamic absolute URL pointing to port 5000 on the same host IP
+const API_BASE = import.meta.env.VITE_API_URL || `http://${window.location.hostname}:5000`;
+
 export default API_BASE;
