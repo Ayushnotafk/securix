@@ -34,7 +34,17 @@ const groupSchema = new mongoose.Schema({
         type: String,
         enum: ['Active', 'Idle', 'Completed'],
         default: 'Idle'
-    }
+    },
+    progress: {
+        type: Number,
+        default: 0,
+        min: 0,
+        max: 100
+    },
+    milestones: [{
+        title: { type: String, required: true },
+        done: { type: Boolean, default: false }
+    }]
 }, { timestamps: true });
 
 module.exports = mongoose.model('Group', groupSchema);

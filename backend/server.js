@@ -6,6 +6,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 const { spawn } = require('child_process');
 const jwt = require('jsonwebtoken');
+const path = require('path');
 const authRoutes = require('./routes/auth');
 const scanRoutes = require('./routes/scans');
 const vulnRoutes = require('./routes/vulnerabilities');
@@ -31,6 +32,7 @@ const io = new Server(server, {
 //--- middleware ---//
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 //--- mongodb connection ---//
@@ -84,14 +86,14 @@ io.on('connection', (socket) => {
         //--- build nmap ---//
         let nmapArgs;
         switch (scanType) {
-            case 'quick': nmapArgs = ['-T4', '-F', targetIp]; break;
-            case 'full': nmapArgs = ['-T4', '-p-', targetIp]; break;
-            case 'vuln': nmapArgs = ['--script', 'vuln', targetIp]; break;
-            case 'os': nmapArgs = ['-O', targetIp]; break;
-            case 'service': nmapArgs = ['-sV', targetIp]; break;
-            default: nmapArgs = ['-T4', '-F', targetIp];
+            case 'quick': nmapArgs = ['-Pn', '-F', '-T4', targetIp]; break;
+            case 'full': nmapArgs = ['-Pn', '-p-', '-T4', targetIp]; break;
+            case 'vuln': nmapArgs = ['-Pn', '--script', 'vuln', targetIp]; break;
+            case 'os': nmapArgs = ['-Pn', '-O', '-T4', targetIp]; break;
+            case 'service': nmapArgs = ['-Pn', '-sV', '-T4', targetIp]; break;
+            default: nmapArgs = ['-Pn', '-F', '-T4', targetIp];
         }
-
+            
         console.log(`[SCAN] User: ${socket.user.email} | nmap ${nmapArgs.join(' ')}`);
         socket.emit('scan-line', { line: `> Initializing ${(scanType || 'quick').toUpperCase()} scan on ${targetIp}...`, color: 'text-slate-300' });
         socket.emit('scan-line', { line: '> [SCANNING] Nmap process started...', color: 'text-blue-400' });
@@ -191,12 +193,12 @@ app.post('/api/scan', authMiddleware, async (req, res) => {
 
     let nmapArgs;
     switch (scanType) {
-        case 'quick': nmapArgs = ['-T4', '-F', targetIp]; break;
-        case 'full': nmapArgs = ['-T4', '-p-', targetIp]; break;
-        case 'vuln': nmapArgs = ['--script', 'vuln', targetIp]; break;
-        case 'os': nmapArgs = ['-O', targetIp]; break;
-        case 'service': nmapArgs = ['-sV', targetIp]; break;
-        default: nmapArgs = ['-T4', '-F', targetIp];
+        case 'quick': nmapArgs = ['-Pn', '-F', '-T4', targetIp]; break;
+        case 'full': nmapArgs = ['-Pn', '-p-', '-T4', targetIp]; break;
+        case 'vuln': nmapArgs = ['-Pn', '--script', 'vuln', targetIp]; break;
+        case 'os': nmapArgs = ['-Pn', '-O', '-T4', targetIp]; break;
+        case 'service': nmapArgs = ['-Pn', '-sV', '-T4', targetIp]; break;
+        default: nmapArgs = ['-Pn', '-F', '-T4', targetIp];
     }
 
     const nmap = spawn('nmap', nmapArgs, { timeout: 120000 });
